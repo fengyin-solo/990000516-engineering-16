@@ -69,6 +69,28 @@ npm run dev      # Start dev server on port 5174
 
 The seed script creates a demo user with a sample board "My Project" containing 3 columns (To Do, In Progress, Done) and 7 sample cards.
 
+## Security Checks (Data Ownership)
+
+The backend ships with a repeatable local check suite for data-ownership security:
+
+```bash
+cd backend
+npm run check:security
+```
+
+It runs in stages and reports the exact stage on failure:
+
+1. **Dependency check** — Node.js >= 18 and backend packages installed (otherwise it tells you to run `npm install`).
+2. **Isolated server** — starts a throwaway API server on a random free port with a temporary SQLite database. Your dev database (`backend/data/taskboard.db`) is never touched.
+3. **Fixtures** — creates two users, each with a board, columns, and cards.
+4. **Auth boundary** — no login / empty token / wrong scheme / expired token / forged signature must all return `401`.
+5. **Cross-account reads** — user B must not see user A's boards, columns, or cards (`404` / list isolation).
+6. **Cross-account writes** — moving a card into another user's column, creating a column in or deleting another user's board/card must return `404` and leave the data untouched.
+7. **Compatibility** — normal user operations (health, login, create board/card, move own card, delete own board) must keep working.
+8. **Cleanup** — the temp server is stopped and the temp database deleted, so repeated runs leave no residual data.
+
+Exit code is `0` when all checks pass, `1` otherwise (failures list the stage, expected vs. actual HTTP status).
+
 ## API Endpoints
 
 ### Authentication

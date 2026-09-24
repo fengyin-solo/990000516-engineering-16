@@ -8,7 +8,7 @@ const columnRoutes = require('./routes/columns');
 const cardRoutes = require('./routes/cards');
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 
 // Middleware
 app.use(cors());
@@ -34,6 +34,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Task Board API running on http://localhost:${PORT}`);
+const server = app.listen(PORT, () => {
+  console.log(`Task Board API running on http://localhost:${server.address().port}`);
 });

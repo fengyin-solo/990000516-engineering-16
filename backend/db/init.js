@@ -3,11 +3,14 @@ const path = require('path');
 const fs = require('fs');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
-const DB_PATH = path.join(DATA_DIR, 'taskboard.db');
+// Allow tools (e.g. the security check script) to point the server at an
+// isolated database file. Defaults to the regular dev database.
+const DB_PATH = process.env.TASKBOARD_DB_PATH || path.join(DATA_DIR, 'taskboard.db');
 
 function getDb() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  const dir = path.dirname(DB_PATH);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
   }
 
   const db = new Database(DB_PATH);
