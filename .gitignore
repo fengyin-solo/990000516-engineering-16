@@ -32,8 +32,6 @@ node_modules/
 # Trae
 .trae/
 
-# Dependencies
-node_modules/
-
-# Trae
-.trae/
+# SQLite WAL artifacts (dev server runtime)
+backend/data/*.db-wal
+backend/data/*.db-shm

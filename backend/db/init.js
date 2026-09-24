@@ -3,7 +3,8 @@ const path = require('path');
 const fs = require('fs');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
-const DB_PATH = path.join(DATA_DIR, 'taskboard.db');
+// Allow overriding the database file (e.g. isolated security-check environment)
+const DB_PATH = process.env.DB_PATH || path.join(DATA_DIR, 'taskboard.db');
 
 function getDb() {
   if (!fs.existsSync(DATA_DIR)) {

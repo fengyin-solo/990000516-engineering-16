@@ -69,6 +69,24 @@ npm run dev      # Start dev server on port 5174
 
 The seed script creates a demo user with a sample board "My Project" containing 3 columns (To Do, In Progress, Done) and 7 sample cards.
 
+## Data-Ownership Security Check (本地安全检查环境)
+
+后端内置一个**可重复执行**的数据归属安全检查，覆盖：未登录、无/无效令牌、过期令牌、
+跨账号读取、移动卡片到他人列、删除他人看板，并回归正常用户操作与既有错误状态码。
+
+```bash
+cd backend
+npm install            # 首次或依赖缺失时（脚本会在「阶段 1」明确指出缺什么）
+npm run security-check
+```
+
+- **隔离运行**：每次在系统临时目录创建全新 SQLite 数据库（`DB_PATH` 环境变量隔离），
+  并在随机端口启动真实 HTTP 服务，绝不触碰 `backend/data/taskboard.db`。
+- **无残留**：结束（含失败、Ctrl-C）自动关闭服务并删除临时目录，可反复执行。
+- **分阶段报告**：依赖缺失或检查失败会指出具体阶段与检查点编号（如 `S3.1`），
+  退出码非 0 便于接入 CI/提交前钩子。
+- 调试时可用 `node security-check/check.js --keep-db` 保留临时数据库现场。
+
 ## API Endpoints
 
 ### Authentication
